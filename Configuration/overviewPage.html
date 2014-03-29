@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>MB Notifications</title>
+</head>
+<body>
+    <div data-role="page" class="page type-interior pluginConfigurationPage notificationConfigurationPage">
+
+        <div data-role="content">
+            <div class="content-primary">
+                <div data-role="controlgroup" data-type="horizontal" class="localnav" data-mini="true">
+                    <a href="#" data-role="button">Overview</a>
+                    <a href="ConfigurationPage?name=PushOverOptions" data-role="button">Pushover</a>
+                    <a href="ConfigurationPage?name=SMTPOptions" data-role="button" class="ui-btn-active">SMTP</a>
+                </div>
+
+                <form class="notificationConfigurationForm">
+                    <h2>Overview</h2>
+                    <ul class="ulForm" data-role="listview">
+                        <li>
+                            <label for="chkEnablePlayBack">Enable PlayBack Notifications</label>
+                            <input type="checkbox" id="chkEnablePlayBack" data-mini="true" />
+                        </li>
+                        <li>
+                            <label for="chkEnableLibray">Enable Libray Change Notifications</label>
+                            <input type="checkbox" id="chkEnableLibray" data-mini="true" />
+                        </li>
+                        <li>
+                            <button type="submit" data-theme="b">Save</button>
+                            <button type="button" onclick="history.back();">Cancel</button>
+                        </li>
+                    </ul>
+
+                </form>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+
+            var NotificationConfigurationPage = {
+                pluginUniqueId: "d6a93f1a-ebf4-42c0-8abe-a9a82db3c3a3"
+            };
+
+            $('.notificationConfigurationPage').on('pageshow', function (event) {
+
+                Dashboard.showLoadingMsg();
+
+                var page = this;
+                ApiClient.getPluginConfiguration(NotificationConfigurationPage.pluginUniqueId).done(function (config) {
+
+                    $('#chkEnablePlayBack', page).checked(config.Notifications.PlayBack).checkboxradio("refresh");
+                    $('#chkEnableLibray', page).checked(config.Notifications.Libray).checkboxradio("refresh");
+
+                    Dashboard.hideLoadingMsg();
+                });
+            });
+
+            $('.notificationConfigurationPage').on('submit', function (e) {
+
+                Dashboard.showLoadingMsg();
+
+                var form = this;
+
+                ApiClient.getPluginConfiguration(NotificationConfigurationPage.pluginUniqueId).done(function (config) {
+
+                    config.Notifications.PlayBack = $('#chkEnablePlayBack', form).checked();
+                    config.Notifications.Libray = $('#chkEnableLibray', form).checked();
+                   
+                    ApiClient.updatePluginConfiguration(NotificationConfigurationPage.pluginUniqueId, config).done(Dashboard.processPluginConfigurationUpdateResult);
+                });
+
+                return false;
+            });
+        </script>
+    </div>
+</body>
+</html>
