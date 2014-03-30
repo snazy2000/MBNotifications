@@ -11,6 +11,7 @@ namespace MBNotifications.Configuration
 
         public Boolean PlayBack { get; set; }
         public Boolean Libray { get; set; }
+        public Boolean System { get; set; }
 
         public NotificationsOptions()
         {

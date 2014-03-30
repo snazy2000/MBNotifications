@@ -24,23 +24,36 @@ namespace MBNotifications.Providers
                     {"message", message}
                 };
 
-                if (string.IsNullOrEmpty(deviceName))
+                if (!string.IsNullOrEmpty(deviceName))
                 {
+                    Plugin.Logger.Debug("MBNotifications - PushOver - Device name - " + deviceName);
                     parameters.Add("device", deviceName);
                 }
 
                 try
                 {
+                    Plugin.Logger.Debug("MBNotifications - PushOver - Token - " + authToken + " - User key - " + userKey );
                     using (var client = new WebClient())
                     {
-                        client.UploadValues("https://api.pushover.net/1/messages.json", parameters);
+                        client.UploadValues(url, parameters);
                     }
 
                     return true;
                 }
                 catch (Exception ex)
                 {
-                    Plugin.Logger.Error("MBNotifications - PushOver - " + ex.ToString());
+                    var wex = (WebException)ex;
+                    var s = wex.Response.GetResponseStream();
+                    string ss = "";
+                    int lastNum = 0;
+                    do
+                    {
+                        lastNum = s.ReadByte();
+                        ss += (char)lastNum;
+                    } while (lastNum != -1);
+                    s.Close();
+
+                    Plugin.Logger.Error("MBNotifications - PushOver - " + ss);
                     return false;
                 }
             }

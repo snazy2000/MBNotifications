@@ -1,15 +1,9 @@
 ﻿using System.Linq;
-using System.Security.Permissions;
-using System.Threading;
 using System.Threading.Tasks;
 using MBNotifications.Configuration;
-using MediaBrowser.Common.Configuration;
-using MediaBrowser.Common.ScheduledTasks;
+using MediaBrowser.Common;
 using MediaBrowser.Common.Security;
-using MediaBrowser.Controller.Entities.Movies;
-using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Library;
-using MediaBrowser.Controller.Notifications;
 using MediaBrowser.Controller.Plugins;
 using MediaBrowser.Controller.Session;
 using MediaBrowser.Model.Entities;
@@ -30,11 +24,6 @@ namespace MBNotifications
         public static ServerEntryPoint Instance { get; private set; }
 
         /// <summary>
-        /// The _task manager
-        /// </summary>
-        private readonly ITaskManager _taskManager;
-
-        /// <summary>
         /// Access to the LibraryManager of MB Server
         /// </summary>
         public ILibraryManager _libraryManager { get; private set; }
@@ -46,6 +35,8 @@ namespace MBNotifications
 
         public ISessionManager _sessionManager { get; set; }
 
+        public IApplicationHost _apphost { get; set; }
+
         Pusher _pusher { get; set; }
 
         /// <summary>
@@ -54,16 +45,17 @@ namespace MBNotifications
         /// <param name="taskManager">The task manager.</param>
         /// <param name="appPaths">The app paths.</param>
         /// <param name="logManager"></param>
-        public ServerEntryPoint(ITaskManager taskManager, ISessionManager sessionManager,  ILibraryManager libraryManager, IApplicationPaths appPaths, ILogManager logManager, ISecurityManager securityManager)
+        public ServerEntryPoint(ISessionManager sessionManager,  ILibraryManager libraryManager, IApplicationHost apphost, ILogManager logManager, ISecurityManager securityManager)
         {
             _sessionManager = sessionManager;
-            _taskManager = taskManager;
             _libraryManager = libraryManager;
+            _apphost = apphost;
+
             PluginSecurityManager = securityManager;
             _pusher = new Pusher();
             
             Plugin.Logger = logManager.GetLogger(Plugin.Instance.Name);
-
+            
 
             Instance = this;
         }
@@ -76,6 +68,17 @@ namespace MBNotifications
             _libraryManager.ItemAdded += LibraryManagerItemAdded;
             _libraryManager.ItemRemoved += LibraryManagerItemRemoved;
             _sessionManager.PlaybackStart += PlaybackStart;
+            _apphost.ApplicationUpdated += _apphost_ApplicationUpdated;
+        }
+
+        void _apphost_ApplicationUpdated(object sender, MediaBrowser.Common.Events.GenericEventArgs<System.Version> e)
+        {
+            Plugin.Logger.Debug("Notifications - System");
+
+            if (Plugin.Instance.Configuration.Notifications.System)
+            {
+                //_pusher.Push(e.Users.FirstOrDefault() + " is watching " + e.Item, 0);
+            }
         }
 
         private void PlaybackStart(object sender, PlaybackProgressEventArgs e)
@@ -102,7 +105,7 @@ namespace MBNotifications
                 if (e.Item.LocationType == LocationType.Virtual) return;
                 _pusher.Push(e.Item + " has been removed to your media server.", 0);
             }
-    }
+        }
 
         private void LibraryManagerItemAdded(object sender, ItemChangeEventArgs e)
         {
