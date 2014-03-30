@@ -26,6 +26,10 @@
                             <input type="checkbox" id="chkEnableLibray" data-mini="true" />
                         </li>
                         <li>
+                            <label for="chkEnableSystemRestart">Enable System Need Restart Notifications</label>
+                            <input type="checkbox" id="chkEnableSystemRestart" data-mini="true" />
+                        </li>
+                        <li>
                             <button type="submit" data-theme="b">Save</button>
                             <button type="button" onclick="history.back();">Cancel</button>
                         </li>
@@ -50,6 +54,7 @@
 
                     $('#chkEnablePlayBack', page).checked(config.Notifications.PlayBack).checkboxradio("refresh");
                     $('#chkEnableLibray', page).checked(config.Notifications.Libray).checkboxradio("refresh");
+                    $('#chkEnableSystemRestart', page).checked(config.Notifications.System).checkboxradio("refresh");
 
                     Dashboard.hideLoadingMsg();
                 });
@@ -65,7 +70,8 @@
 
                     config.Notifications.PlayBack = $('#chkEnablePlayBack', form).checked();
                     config.Notifications.Libray = $('#chkEnableLibray', form).checked();
-                   
+                    config.Notifications.System = $('#chkEnableSystemRestart', form).checked();
+
                     ApiClient.updatePluginConfiguration(NotificationConfigurationPage.pluginUniqueId, config).done(Dashboard.processPluginConfigurationUpdateResult);
                 });
 

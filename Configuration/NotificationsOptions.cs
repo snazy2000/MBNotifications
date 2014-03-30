@@ -1,5 +1,6 @@
 ﻿using System;
 using MBNotifications.Configuration.Options;
+using MBNotifications.Providers;
 
 namespace MBNotifications.Configuration
 {
@@ -7,6 +8,7 @@ namespace MBNotifications.Configuration
     {
         public PushOverOptions PushOver { get; set; }
         public SMTPOptions SMTP { get; set; }
+        public PushALotOptions PushALot { get; set; }
 
 
         public Boolean PlayBack { get; set; }
@@ -17,6 +19,7 @@ namespace MBNotifications.Configuration
         {
             PushOver = new PushOverOptions();
             SMTP = new SMTPOptions();
+            PushALot = new PushALotOptions();
         }
     }
 

@@ -15,7 +15,7 @@ namespace MBNotifications
     /// <summary>
     /// Class ServerEntryPoint
     /// </summary>
-    public class ServerEntryPoint : IServerEntryPoint//, IRequiresRegistration
+    public class ServerEntryPoint : IServerEntryPoint, IRequiresRegistration
     {
         /// <summary>
         /// Gets the instance.
@@ -31,7 +31,7 @@ namespace MBNotifications
         /// <summary>
         /// Access to the SecurityManager of MB Server
         /// </summary>
-        public ISecurityManager PluginSecurityManager { get; set; }
+        public ISecurityManager _securityManager { get; set; }
 
         public ISessionManager _sessionManager { get; set; }
 
@@ -51,12 +51,11 @@ namespace MBNotifications
             _libraryManager = libraryManager;
             _apphost = apphost;
 
-            PluginSecurityManager = securityManager;
+            _securityManager = securityManager;
             _pusher = new Pusher();
             
             Plugin.Logger = logManager.GetLogger(Plugin.Instance.Name);
             
-
             Instance = this;
         }
 
@@ -68,16 +67,16 @@ namespace MBNotifications
             _libraryManager.ItemAdded += LibraryManagerItemAdded;
             _libraryManager.ItemRemoved += LibraryManagerItemRemoved;
             _sessionManager.PlaybackStart += PlaybackStart;
-            _apphost.ApplicationUpdated += _apphost_ApplicationUpdated;
+            _apphost.HasPendingRestartChanged += _apphost_HasPendingRestartChanged;
         }
 
-        void _apphost_ApplicationUpdated(object sender, MediaBrowser.Common.Events.GenericEventArgs<System.Version> e)
+        void _apphost_HasPendingRestartChanged(object sender, System.EventArgs e)
         {
             Plugin.Logger.Debug("Notifications - System");
 
             if (Plugin.Instance.Configuration.Notifications.System)
             {
-                //_pusher.Push(e.Users.FirstOrDefault() + " is watching " + e.Item, 0);
+                _pusher.Push("Your Media Server Needs a Restart To Apply An update", 0);
             }
         }
 
@@ -142,8 +141,8 @@ namespace MBNotifications
         /// <returns></returns>
         public async Task LoadRegistrationInfoAsync()
         {
-            //Plugin.Instance.Registration = await PluginSecurityManager.GetRegistrationStatus("GenreCleaner").ConfigureAwait(false);
-            //Plugin.Logger.Debug("GenreCleaner Registration Status - Registered: {0} In trial: {2} Expiration Date: {1} Is Valid: {3}", Plugin.Instance.Registration.IsRegistered, Plugin.Instance.Registration.ExpirationDate, Plugin.Instance.Registration.TrialVersion, Plugin.Instance.Registration.IsValid);
+            Plugin.Instance.Registration = await _securityManager.GetRegistrationStatus("MBNotifications").ConfigureAwait(false);
+            Plugin.Logger.Debug("MBNotifications Registration Status - Registered: {0} In trial: {2} Expiration Date: {1} Is Valid: {3}", Plugin.Instance.Registration.IsRegistered, Plugin.Instance.Registration.ExpirationDate, Plugin.Instance.Registration.TrialVersion, Plugin.Instance.Registration.IsValid);
         }
 
         
