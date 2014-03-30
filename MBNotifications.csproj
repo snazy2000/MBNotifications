@@ -58,6 +58,7 @@
     <Compile Include="Configuration\OverviewPage.cs" />
     <Compile Include="Configuration\NotificationsOptions.cs" />
     <Compile Include="Configuration\PluginConfiguration.cs" />
+    <Compile Include="Configuration\PushALotPage.cs" />
     <Compile Include="Configuration\SMTPPage.cs" />
     <Compile Include="Configuration\PushOverPage.cs" />
     <Compile Include="Configuration\Options\PushOverOptions.cs" />
@@ -80,6 +81,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Configuration\SMTPPage.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\pushALotPage.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

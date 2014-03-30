@@ -9,26 +9,27 @@
         <div data-role="content">
             <div class="content-primary">
                 <div data-role="controlgroup" data-type="horizontal" class="localnav" data-mini="true">
-                    <a href="#" data-role="button" class="ui-btn-active">Overview</a>
+                    <a href="ConfigurationPage?name=OverView" data-role="button">Overview</a>
                     <a href="ConfigurationPage?name=PushOverOptions" data-role="button">Pushover</a>
                     <a href="ConfigurationPage?name=SMTPOptions" data-role="button">SMTP</a>
-                    <a href="ConfigurationPage?name=PushALotOptions" data-role="button">PushALot</a>
+                    <a href="#" data-role="button" class="ui-btn-active">PushALot</a>
                 </div>
 
                 <form class="notificationConfigurationForm">
-                    <h2>Overview</h2>
+                    <h2>PushALot</h2>
                     <ul class="ulForm" data-role="listview">
                         <li>
-                            <label for="chkEnablePlayBack">Enable PlayBack Notifications</label>
-                            <input type="checkbox" id="chkEnablePlayBack" data-mini="true" />
+                            <label for="chkEnablePushALot">Enable PushALot Notifications</label>
+                            <input type="checkbox" id="chkEnablePushALot" data-mini="true" />
                         </li>
                         <li>
-                            <label for="chkEnableLibray">Enable Libray Change Notifications</label>
-                            <input type="checkbox" id="chkEnableLibray" data-mini="true" />
-                        </li>
-                        <li>
-                            <label for="chkEnableSystemRestart">Enable System Need Restart Notifications</label>
-                            <input type="checkbox" id="chkEnableSystemRestart" data-mini="true" />
+                            <label for="txtPushALotAuthKey">
+                                PushALot Auth Token:
+                            </label>
+                            <input type="text" id="txtPushALotAuthKey" name="txtPushALotAuthKey" />
+                            <div class="fieldDescription">
+                                Auth key for your application
+                            </div>
                         </li>
                         <li>
                             <button type="submit" data-theme="b">Save</button>
@@ -51,11 +52,10 @@
                 Dashboard.showLoadingMsg();
 
                 var page = this;
-                ApiClient.getPluginConfiguration(NotificationConfigurationPage.pluginUniqueId).done(function (config) {
 
-                    $('#chkEnablePlayBack', page).checked(config.Notifications.PlayBack).checkboxradio("refresh");
-                    $('#chkEnableLibray', page).checked(config.Notifications.Libray).checkboxradio("refresh");
-                    $('#chkEnableSystemRestart', page).checked(config.Notifications.System).checkboxradio("refresh");
+                ApiClient.getPluginConfiguration(NotificationConfigurationPage.pluginUniqueId).done(function (config) {
+                    $('#chkEnablePushALot', page).checked(config.Notifications.PushALot.Enabled).checkboxradio("refresh");
+                    $('#txtPushALotAuthKey', page).val(config.Notifications.PushALot.Token);
 
                     Dashboard.hideLoadingMsg();
                 });
@@ -69,9 +69,8 @@
 
                 ApiClient.getPluginConfiguration(NotificationConfigurationPage.pluginUniqueId).done(function (config) {
 
-                    config.Notifications.PlayBack = $('#chkEnablePlayBack', form).checked();
-                    config.Notifications.Libray = $('#chkEnableLibray', form).checked();
-                    config.Notifications.System = $('#chkEnableSystemRestart', form).checked();
+                    config.Notifications.PushALot.Enabled = $('#chkEnablePushALot', form).checked();
+                    config.Notifications.PushALot.Token = $('#txtPushALotAuthKey', form).val();
 
                     ApiClient.updatePluginConfiguration(NotificationConfigurationPage.pluginUniqueId, config).done(Dashboard.processPluginConfigurationUpdateResult);
                 });
