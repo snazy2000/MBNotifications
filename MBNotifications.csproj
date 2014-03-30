@@ -54,16 +54,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\Options\PushALotOptions.cs" />
+    <Compile Include="Configuration\Options\ProwlOptions.cs" />
     <Compile Include="Configuration\Options\SMTPOptions.cs" />
     <Compile Include="Configuration\OverviewPage.cs" />
     <Compile Include="Configuration\NotificationsOptions.cs" />
     <Compile Include="Configuration\PluginConfiguration.cs" />
     <Compile Include="Configuration\PushALotPage.cs" />
+    <Compile Include="Configuration\ProwlPage.cs" />
     <Compile Include="Configuration\SMTPPage.cs" />
     <Compile Include="Configuration\PushOverPage.cs" />
     <Compile Include="Configuration\Options\PushOverOptions.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\Prowl.cs" />
     <Compile Include="Providers\Pusher.cs" />
     <Compile Include="Providers\PushALot.cs" />
     <Compile Include="Providers\SMTP.cs" />
@@ -84,6 +87,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Configuration\pushALotPage.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\prowlPage.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

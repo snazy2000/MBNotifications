@@ -10,45 +10,27 @@
             <div class="content-primary">
                 <div data-role="controlgroup" data-type="horizontal" class="localnav" data-mini="true">
                     <a href="ConfigurationPage?name=OverView" data-role="button">Overview</a>
-                    <a href="#" data-role="button" class="ui-btn-active">Pushover</a>
+                    <a href="ConfigurationPage?name=PushOverOptions" data-role="button" >Pushover</a>
                     <a href="ConfigurationPage?name=SMTPOptions" data-role="button">SMTP</a>
                     <a href="ConfigurationPage?name=PushALotOptions" data-role="button">PushALot</a>
-                    <a href="ConfigurationPage?name=ProwlOptions" data-role="button">Prowl</a>
+                    <a href="#" data-role="button" class="ui-btn-active">Prowl</a>
                 </div>
 
                 <form class="notificationConfigurationForm">
-                    <h2>Pushover</h2>
-                    <p>To use PushOver register an application at <a href="https://pushover.net/">pushover.net</a></p>
+                    <h2>Prowl</h2>
+                    <p>To use Prowl register an application at <a href="https://www.prowlapp.com/">prowlapp.com</a></p>
                     <ul class="ulForm" data-role="listview">
                         <li>
-                            <label for="chkEnablePushOver">Enable PushOver Notifications</label>
-                            <input type="checkbox" id="chkEnablePushOver" data-mini="true" />
+                            <label for="chkEnableProwl">Enable Prown Notifications</label>
+                            <input type="checkbox" id="chkEnableProwl" data-mini="true" />
                         </li>
                         <li>
-                            <label for="txtPushOverAuthKey">
-                                PushOver Auth Token:
+                            <label for="txtProwlAuthKey">
+                                Prowl Auth Token:
                             </label>
-                            <input type="text" id="txtPushOverAuthKey" name="txtPushOverAuthKey" />
+                            <input type="text" id="txtProwlAuthKey" name="txtProwlAuthKey" />
                             <div class="fieldDescription">
                                 Auth key for your application
-                            </div>
-                        </li>
-                        <li>
-                            <label for="txtPushOverUserKey">
-                                PushOver User Key:
-                            </label>
-                            <input type="text" id="txtPushOverUserKey" name="txtPushOverUserKey" />
-                            <div class="fieldDescription">
-                                User key for your application
-                            </div>
-                        </li>
-                        <li>
-                            <label for="txtPushOverDeviceName">
-                                PushOver Device Name:
-                            </label>
-                            <input type="text" id="txtPushOverDeviceName" name="txtPushOverDeviceName" />
-                            <div class="fieldDescription">
-                                Device Name for application
                             </div>
                         </li>
                         <li>
@@ -74,11 +56,9 @@
                 var page = this;
 
                 ApiClient.getPluginConfiguration(NotificationConfigurationPage.pluginUniqueId).done(function (config) {
-                    $('#chkEnablePushOver', page).checked(config.Notifications.PushOver.Enabled).checkboxradio("refresh");
-                    $('#txtPushOverAuthKey', page).val(config.Notifications.PushOver.Token);
-                    $('#txtPushOverUserKey', page).val(config.Notifications.PushOver.UserKey);
-                    $('#txtPushOverDeviceName', page).val(config.Notifications.PushOver.DeviceName);
-
+                    $('#chkEnableProwl', page).checked(config.Notifications.Prowl.Enabled).checkboxradio("refresh");
+                    $('#txtProwlAuthKey', page).val(config.Notifications.Prowl.Token);
+                   
                     Dashboard.hideLoadingMsg();
                 });
             });
@@ -91,11 +71,8 @@
 
                 ApiClient.getPluginConfiguration(NotificationConfigurationPage.pluginUniqueId).done(function (config) {
 
-                    config.Notifications.PushOver.Enabled = $('#chkEnablePushOver', form).checked();
-                    config.Notifications.PushOver.Token = $('#txtPushOverAuthKey', form).val();
-                    config.Notifications.PushOver.UserKey = $('#txtPushOverUserKey', form).val();
-                    config.Notifications.PushOver.DeviceName = $('#txtPushOverDeviceName', form).val();
-
+                    config.Notifications.Prowl.Enabled = $('#chkEnableProwl', form).checked();
+                    config.Notifications.Prowl.Token = $('#txtProwlAuthKey', form).val();
 
                     ApiClient.updatePluginConfiguration(NotificationConfigurationPage.pluginUniqueId, config).done(Dashboard.processPluginConfigurationUpdateResult);
                 });
