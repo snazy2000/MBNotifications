@@ -1,7 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MBNotifications.Configuration;
 using MediaBrowser.Common;
+using MediaBrowser.Common.Events;
+using MediaBrowser.Common.ScheduledTasks;
 using MediaBrowser.Common.Security;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Plugins;
@@ -9,6 +13,7 @@ using MediaBrowser.Controller.Session;
 using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.Logging;
 using MBNotifications.Providers;
+using MediaBrowser.Model.Tasks;
 
 namespace MBNotifications
 {
@@ -37,6 +42,8 @@ namespace MBNotifications
 
         public IApplicationHost _apphost { get; set; }
 
+        public ITaskManager _taskManager { get; set; }
+
         Pusher _pusher { get; set; }
 
         /// <summary>
@@ -45,17 +52,17 @@ namespace MBNotifications
         /// <param name="taskManager">The task manager.</param>
         /// <param name="appPaths">The app paths.</param>
         /// <param name="logManager"></param>
-        public ServerEntryPoint(ISessionManager sessionManager,  ILibraryManager libraryManager, IApplicationHost apphost, ILogManager logManager, ISecurityManager securityManager)
+        public ServerEntryPoint(ISessionManager sessionManager,  ILibraryManager libraryManager, IApplicationHost apphost, ILogManager logManager, ISecurityManager securityManager, ITaskManager taskManager)
         {
             _sessionManager = sessionManager;
             _libraryManager = libraryManager;
             _apphost = apphost;
-
+            _taskManager = taskManager;
             _securityManager = securityManager;
             _pusher = new Pusher();
             
             Plugin.Logger = logManager.GetLogger(Plugin.Instance.Name);
-            
+          
             Instance = this;
         }
 
@@ -68,6 +75,18 @@ namespace MBNotifications
             _libraryManager.ItemRemoved += LibraryManagerItemRemoved;
             _sessionManager.PlaybackStart += PlaybackStart;
             _apphost.HasPendingRestartChanged += _apphost_HasPendingRestartChanged;
+            _taskManager.TaskCompleted += _taskManager_TaskCompleted;
+        }
+
+        void _taskManager_TaskCompleted(object sender, GenericEventArgs<TaskResult> e)
+        {
+            if (Plugin.Instance.Configuration.Notifications.Tasks)
+            {
+                if (e.Argument.Status.ToString() == "Failed")
+                {
+                    _pusher.Push("Media Server Task " + e.Argument.Name + " Error : " + e.Argument.ErrorMessage, 0);
+                }
+            }
         }
 
         void _apphost_HasPendingRestartChanged(object sender, System.EventArgs e)
@@ -145,6 +164,5 @@ namespace MBNotifications
             Plugin.Logger.Debug("MBNotifications Registration Status - Registered: {0} In trial: {2} Expiration Date: {1} Is Valid: {3}", Plugin.Instance.Registration.IsRegistered, Plugin.Instance.Registration.ExpirationDate, Plugin.Instance.Registration.TrialVersion, Plugin.Instance.Registration.IsValid);
         }
 
-        
     }
 }

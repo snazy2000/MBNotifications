@@ -31,6 +31,10 @@
                             <input type="checkbox" id="chkEnableSystemRestart" data-mini="true" />
                         </li>
                         <li>
+                            <label for="chkEnableFailedTasks">Enable Failed Tasks Notifications</label>
+                            <input type="checkbox" id="chkEnableFailedTasks" data-mini="true" />
+                        </li>
+                        <li>
                             <button type="submit" data-theme="b">Save</button>
                             <button type="button" onclick="history.back();">Cancel</button>
                         </li>
@@ -56,6 +60,7 @@
                     $('#chkEnablePlayBack', page).checked(config.Notifications.PlayBack).checkboxradio("refresh");
                     $('#chkEnableLibray', page).checked(config.Notifications.Libray).checkboxradio("refresh");
                     $('#chkEnableSystemRestart', page).checked(config.Notifications.System).checkboxradio("refresh");
+                    $('#chkEnableFailedTasks', page).checked(config.Notifications.Tasks).checkboxradio("refresh");
 
                     Dashboard.hideLoadingMsg();
                 });
@@ -72,7 +77,9 @@
                     config.Notifications.PlayBack = $('#chkEnablePlayBack', form).checked();
                     config.Notifications.Libray = $('#chkEnableLibray', form).checked();
                     config.Notifications.System = $('#chkEnableSystemRestart', form).checked();
+                    config.Notifications.Tasks = $('#chkEnableFailedTasks', form).checked();
 
+                    
                     ApiClient.updatePluginConfiguration(NotificationConfigurationPage.pluginUniqueId, config).done(Dashboard.processPluginConfigurationUpdateResult);
                 });
 

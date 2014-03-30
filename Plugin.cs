@@ -3,7 +3,6 @@ using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Plugins;
 using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.Logging;
-using MediaBrowser.Model.Plugins;
 using MediaBrowser.Model.Serialization;
 
 namespace MBNotifications
@@ -52,16 +51,5 @@ namespace MBNotifications
         /// Holds our registration information
         /// </summary>
         public MBRegistrationRecord Registration { get; set; }
-
-        /// <summary>
-        /// Updates the configuration.
-        /// </summary>
-        /// <param name="configuration">The configuration.</param>
-        public override void UpdateConfiguration(BasePluginConfiguration configuration)
-        {
-            base.UpdateConfiguration(configuration);
-            ServerEntryPoint.Instance.OnConfigurationUpdated(Configuration, (PluginConfiguration)configuration);
-        }
-
     }
 }
